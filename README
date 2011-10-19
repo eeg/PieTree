@@ -1,8 +1,8 @@
 Emma Goldberg
 eeg@umd.edu
 
-PieTree version 0.2
-April, 2008
+PieTree version 0.3
+April, 2009
 
 PieTree is a program for displaying character reconstructions on a phylogeny.
 It is written in Python, using the Cairo graphics library.

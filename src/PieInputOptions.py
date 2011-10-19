@@ -1,30 +1,10 @@
 #! /usr/bin/env python
 
-#--------------------------------------------------
-# Copyright 2008 Emma Goldberg
-# 
-# This file is part of PieTree.
-# 
-# PieTree is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-# 
-# PieTree is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-# 
-# You should have received a copy of the GNU General Public License
-# along with PieTree.  If not, see <http://www.gnu.org/licenses/>.
-#-------------------------------------------------- 
-
 ######################################################
 # Module:  PieInputOptions.py
 # Author:  Emma Goldberg, based on Walter Brisken's PieTree.c
 # Date:	 Apr, 2008
 ######################################################
-
 
 '''
 Parse options from the command line and input config file.
@@ -41,7 +21,7 @@ def ParseCmdLine():
 
 	### set up the command line option parser ###
 
-	parser = OptionParser(version="PieTree 0.2, Apr 2008")
+	parser = OptionParser(version="PieTree 0.3, Apr 2009")
 
 	parser.add_option("--opt", dest="optfile", \
 			help="config file containing options")
@@ -53,6 +33,11 @@ def ParseCmdLine():
 	parser.add_option("--outformat", dest="outformat", type="choice", \
 			choices = format_choices, help="image type to be created [" + 
 			", ".join(format_choices) + "]", config="true")
+
+	shape_choices = ("rect", "radial")
+	parser.add_option("--shape", dest="shape", type="choice", \
+			choices = shape_choices, help="tree shape [" + 
+			", ".join(shape_choices) + "]", config="true")
 
 	parser.add_option("--pieradius", dest="pieradius", type="float",  \
 			help="radius of node reconstruction pie charts", config="true")
@@ -116,6 +101,7 @@ def ParseCmdLine():
 	parser.set_defaults( \
 			outfile = "pietree", \
 			#outformat = "pdf", \	# see suffix stuff below
+			shape = "rect", \
 			pieradius = 7.0, \
 			italic = "no", \
 			serif = "no", \
@@ -127,7 +113,7 @@ def ParseCmdLine():
 			rimthick = 2.0, \
 			linethick = 1.0, \
 			width = 800.0, \
-			xmargin = 20.0, \
+			xmargin = 10.0, \
 			ymargin = 10.0 \
 			# fine to leave background color as None
 			)
@@ -212,8 +198,11 @@ def SetDefaults(c, numtips):
 		c.rimthick = c.linethick
 
 	if c.height == None:
-		#c.height = (numtips + 1) * c.tipspacing	# original
-		c.height = numtips * c.tipspacing + 2*c.ymargin
+		if c.shape == "rect":
+			#c.height = (numtips + 1) * c.tipspacing	# original
+			c.height = numtips * c.tipspacing + 2*c.ymargin
+		else:
+			c.height = c.width
 
 
 def ParseRGBColor(colstr):

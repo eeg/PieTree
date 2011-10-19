@@ -1,0 +1,9 @@
+0.3 (7 April 2009)
+------------------
+* Added radial functionality.
+* Underscores in tip names are replaced with spaces.
+* Fixed a bug that caused half the root pie to be cut off when xmargin = 0
+
+0.2 (20 April 2008)
+-------------------
+* Translated PieTree from C to Python.
