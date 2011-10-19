@@ -1,0 +1,6 @@
+outfile = example2
+pieradius = 5
+tipspacing = 20
+tipnamesize = 12
+rimthick = 3
+linethick = 2

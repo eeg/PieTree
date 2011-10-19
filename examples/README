@@ -1,0 +1,4 @@
+start with this:
+
+../src/PieTree.py --opt opt1.pie example.ttn
+

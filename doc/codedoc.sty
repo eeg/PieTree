@@ -1,0 +1,76 @@
+
+%\newenvironment{showtext}{\begin{list}{} {\setlength\leftmargin{0.5in}\setlength\rightmargin{0.7in}} \item[]} {\end{list}}
+%\newenvironment{filesays}[1]{\begin{showtext} File contents: #1 \\ \rule{\linewidth}{0.4pt} \par}{\end{showtext}}
+%\newenvironment{commandis}{\begin{showtext} \ttfamily}{\end{showtext}}
+
+%%% define an evironment for showing the contents of a file
+\newenvironment{filesays}[1]
+{
+	\begin{list}{}
+	{
+		\setlength\leftmargin{0.5in}
+		\setlength\rightmargin{0.7in}
+		\setlength\topsep{-5pt}
+	}
+	\item[]
+	File contents: \texttt{#1} \\ 
+	\rule{\linewidth}{0.4pt} \par
+	\ttfamily
+}
+{
+	\end{list}
+}
+
+%%% define an environment for showing commands to issue
+\newenvironment{commandis}
+{
+	\begin{list}{}
+	{
+		\setlength\leftmargin{0.5in}
+		\setlength\rightmargin{0.7in}
+		\setlength\topsep{-5pt}
+	}
+	\item[]
+	\ttfamily
+}
+{
+	\end{list}
+}
+
+\newenvironment{tightlist}
+{
+	\begin{list}{}
+	{
+		\setlength{\parsep}{-3pt}
+		\setlength\topsep{-5pt}
+	} 
+}
+{
+	\end{list}
+}
+
+\newenvironment{optdescrip}
+{
+	\begin{list}{}
+	{
+		\let\makelabel\optdescriplabel
+		\setlength{\parsep}{-3pt}
+	} 
+}
+{
+	\end{list}
+}
+\newcommand*\optdescriplabel[1]{\texttt{#1}}
+
+\newenvironment{valdescrip}
+{
+	\begin{list}{}
+	{
+		\let\makelabel\valdescriplabel
+		\setlength{\parsep}{-3pt}
+	} 
+}
+{
+	\end{list}
+}
+\newcommand*\valdescriplabel[1]{\texttt{= #1}}

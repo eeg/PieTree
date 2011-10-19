@@ -1,0 +1,11 @@
+# warning: this color scheme is scary
+outfile = example3
+pieradius = 0
+boxsize = 15 
+tipnamesize = 0
+color0 = "(0, 1, 1)"
+color1 = "(1, 0, 1)"
+linecolor = "(1, 1, 0)"
+backcolor = "(0, 0, 0)"
+rimthick = 0
+linethick = 3

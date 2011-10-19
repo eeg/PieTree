@@ -1,0 +1,372 @@
+\documentclass[10pt]{article}
+\usepackage{fullpage}
+
+% try this
+%\usepackage[T1]{fontenc}
+%\usepackage{pslatex}
+
+% my .sty file defining the environments filesays, commandis, tightlist
+\usepackage{codedoc}
+
+\usepackage{xspace}
+
+\newcommand{\PT}{\texttt{PieTree}\xspace}
+\newcommand{\PTpath}{\texttt{/path/to/PieTree.py}\xspace}
+
+\parindent 0pt
+\parskip 10pt
+
+% TODO
+% put GPL info in each source file
+
+\begin{document}
+
+
+\title{
+	\vspace{-20pt}
+	\Large{ {\bf PieTree} Manual} \\
+	\large{ version 0.2 } 
+}
+\author{
+	\large{Emma Goldberg} \\
+	\large{\texttt{eeg@umd.edu}} 
+}
+\maketitle
+
+
+\tableofcontents
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Background}
+\addcontentsline{toc}{section}{Background}
+
+\subsection*{Purpose}
+\addcontentsline{toc}{subsection}{Purpose}
+
+\PT is a program for drawing pretty pictures of phylogenetic trees, particularly for the purpose of displaying ancestral state reconstructions of discrete characters.
+It doesn't do any kind of analysis---it just produces images.
+
+\subsection*{History}
+\addcontentsline{toc}{subsection}{History}
+
+The first incarnation of \PT was written in C by Walter Brisken in December, 2007.
+In April, 2008, I rewrote it all in Python (as an excuse to practice Python and learn about the Cairo graphics library), gave it a more useable interface, and made the output as bulletproof as I could.
+I'm hoping to recruit beta-testers now.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Installation}
+\addcontentsline{toc}{section}{Installation}
+
+Sorry these instructions are so bad now. 
+I really don't know what will be required in various cases.
+If you get it working, please tell me what you did so I can pass the info along.
+
+\subsection*{Dependencies}
+\addcontentsline{toc}{subsection}{Dependencies}
+
+To use \PT, you will need the Cairo graphics library (\texttt{cairographics.org}; I used version 1.4.2), the Python programming language (\texttt{python.org}; I used version 2.5.1), the Python package for Cairo, and the Python module \texttt{configparse} (\texttt{gustaebel.de/lars/configparse/}).
+
+Good places to start are \texttt{cairographics.org/download} and \texttt{python.org/download}.
+I have included a copy of \texttt{configparse.py} with my \PT files.
+
+
+\subsubsection*{Linux}
+\addcontentsline{toc}{subsubsection}{Linux}
+
+On Ubuntu, it should be sufficient to run
+\begin{commandis}
+	sudo apt-get install python-cairo
+\end{commandis}
+which will pull in \texttt{libcairo2} as a dependency.
+You might also need \texttt{libcairo2-dev}.
+
+On Gentoo, try
+\begin{commandis}
+	emerge pycairo
+\end{commandis}
+
+On Fedora, try
+\begin{commandis}
+	sudo yum install pycairo
+\end{commandis}
+
+\subsubsection*{Mac OS X}
+\addcontentsline{toc}{subsubsection}{Mac OS X}
+
+Help, please.  
+Maybe take a look at \texttt{kenkeiter.com/2007/11/21/compiling-cairo-and-pycairo-on-os-x/}
+
+\subsubsection*{Windows}
+\addcontentsline{toc}{subsubsection}{Windows}
+
+I'm sure it's possible, but I haven't tried.
+
+
+\subsection*{PieTree itself}
+\addcontentsline{toc}{subsection}{\PT itself}
+
+Once you've gotten to the point where you can start Python and execute \texttt{import cairo} and \texttt{import optparse} (I think that's a good test\ldots), download \PT from \texttt{www.biology.ucsd.edu/$\sim$goldberg/code/} \texttt{code.html}.
+In the \texttt{src/} directory are a few \texttt{.py} files, including the main executable \texttt{PieTree.py}.
+
+Remember where you put this whole directory---you will either need to add it to your path or include the full path when you execute \PT.  In this document, I'll write it as \PTpath.
+I found it useful to create the file shown below to add \PT to my Python path:
+\begin{filesays}{/usr/lib/python2.5/site-packages/PieTree.pth}
+	/home/emma/src/PieTree-0.2/src/
+\end{filesays}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section*{Usage}
+\addcontentsline{toc}{section}{Usage}
+
+\subsection*{Quick start}
+\addcontentsline{toc}{subsection}{Quick start}
+
+\texttt{PieTree-0.2/examples/} contains a sample tree file called \texttt{example.ttn}.
+If you execute
+\begin{commandis}
+	\PTpath example.ttn
+\end{commandis}
+you should see a note saying
+\begin{commandis}
+	created pietree.pdf
+\end{commandis}
+
+
+\subsection*{Input tree file}
+\addcontentsline{toc}{subsection}{Input tree file}
+
+You will need to create a plain text file containing your tree and character states.
+It's a very simple format: first a Newick string for the tree, including tip and node labels and branch lengths, and then a list of the tip/node labels and their corresponding character state values, one per line.
+
+A minimalist example is
+
+\pagebreak
+
+\begin{filesays}{minimal.ttn}
+	\# this is a comment   \\
+	((tipA:1, tipB:1)node1:2, tipC:3)node2; \\
+	tipA   1		\\
+	tipB   0		\\
+	tipC   1		\\
+	node1  0.5	\\
+	node2  0.8
+\end{filesays}
+and look at the included \texttt{example.ttn} for a larger example.
+
+I give my tree files the suffix \texttt{.ttn}, which stands for ``trees, tips, nodes,'' but you can call yours whatever you want.
+
+The character states must be 0 and 1 (only binary characters for now).
+For a node with an uncertain state, give the proportion of the weight given to state 1; i.e.\ \texttt{node2} above was reconstructed as 20\% state 0 and 80\% state 1.
+
+Note that all tips and nodes must be labeled in the tree string, and those labels must match the ones given in the list of character states.
+If there's a label mismatch or omission, you should get a warning message and/or have a missing ``pie'' in the output figure.
+The order of the lines in the character state list is not important.
+Blank lines and lines beginning with \texttt{\#} are ignored.
+
+
+\subsection*{Image options}
+\addcontentsline{toc}{subsection}{Image options}
+
+There are lots of options for tweaking the image that's produced.
+To see a help message with a summary of them all, just type
+\begin{commandis}
+	\PTpath
+\end{commandis}
+
+\subsubsection*{Specifying options}
+\addcontentsline{toc}{subsubsection}{Specifying options}
+
+As an example, say you want to increase the size of the ``pies'' and add some color.
+% FIXME: tt quotes
+
+One way to do this is with command line options:
+\begin{commandis}
+	\PTpath \ --pieradius=9 --color1='(0, 0.5, 0.7)' example.ttn
+\end{commandis}
+Note that you need quote marks (either single or double) around the color value because it contains special characters (punctuation, since it's an RGB triplet).
+I used = signs in the example above, but you can replace them with spaces instead, as I show below.  If you do use = signs, there can't be any spaces around them.
+
+% TODO: note about needing quotes around names with hyphens in opt file (but not on command line)
+Another method is to create a file containing your desired options, e.g.\
+\begin{filesays}{opts.pie}
+	pieradius = 9				\\
+	color1 = '(0, 0.5, 0.7)'		\\
+	outfile = prettytree.pdf
+\end{filesays}
+and then to specify that file on the command line:
+\begin{commandis}
+	\PTpath \ --opt opts.pie example.ttn
+\end{commandis}
+In option files, the = sign is required but spaces around it are fine.  Color strings still need to be surrounded by quotes.
+
+If an option is given in both the input file and on the command line, the command line value takes effect.
+\begin{commandis}
+	\PTpath \ --opt opts.pie --color1 '(0.4, 0.8, 0)' example.ttn
+\end{commandis}
+
+{\em Note that the final argument must always be your input tree file.}
+
+All the other options, detailed below, can be specified in the same manner.
+
+
+\subsubsection*{All the options}
+\addcontentsline{toc}{subsubsection}{All the options}
+
+Here are all the possible options, their allowed values, and their default values.
+Again, to get a quick (and possibly more up-to-date) summary, type:
+\begin{commandis}
+	\PTpath
+\end{commandis}
+
+
+\begin{optdescrip}
+
+	\item[opt] A file containing your desired option values.  Use one line per value, each in the form {\texttt option = value}.
+
+	\item[outfile] A name for the output file.  If it doesn't have a suffix (like \texttt{.pdf}), an appropriate one will be appended. [default is \texttt{pietree}]
+% TODO: note that radial looks best in pdf and svg
+
+	\item[outformat] The file format of the output image.  If you also specify an \texttt{outfile} with a suffix, \texttt{outformat} takes precedence and an appropriate suffix will be appended.
+		\begin{valdescrip}
+			\item[pdf] Adobe's format
+			\item[ps]  (encapsulated) postscript
+			\item[svg] scalable vector graphics
+			\item[png] portable network graphics (lossless bitmap)
+		\end{valdescrip}
+
+% TODO: shape = rect (default) or radial
+
+	\item[pieradius] The radius of the pie chart showing the node reconstruction.
+		\begin{valdescrip}
+			\item[] any number $\ge 0$ [default is 7]
+		\end{valdescrip}
+
+	\item[boxsize] The height of the box showing the tip state.
+		\begin{valdescrip}
+			\item[] any number $\ge 0$ (default is 1.9 $*$ \texttt{pieradius})
+		\end{valdescrip}
+
+	\item[tipspacing] The distance between tip box centers.
+		\begin{valdescrip}
+			\item[] any number $\ge 0$ (default is 1.5 $*$ \texttt{boxsize})
+		\end{valdescrip}
+
+	\item[tipnamesize] The font size of the tip labels.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is \texttt{boxsize})
+		\end{valdescrip}
+
+	\item[nodenamesize] The font size of the internal node labels.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is 0.75 $*$ \texttt{tipnamesize})
+		\end{valdescrip}
+
+	\item[italic] Whether to italicize the text.
+		\begin{valdescrip}
+			\item[yes] italics
+			\item[no] normal upright (default)
+		\end{valdescrip}
+
+	\item[serif] Whether to use a serif font.
+		\begin{valdescrip}
+			\item[yes] serif font
+			\item[no] sans-serif font (default)
+		\end{valdescrip}
+
+	\item[color0] The color for state 0.
+		\begin{valdescrip}
+		\item[(R, G, B)] \texttt{R}, \texttt{G}, and \texttt{B} are the values for the red, green, and blue components of the color (each between 0 and 1).  These three numbers must be separated with commas and the whole thing surrounded with parentheses and quote marks.  [default is white = `(1, 1, 1)']
+		\end{valdescrip}
+
+	\item[color1] The color for state 1.
+		\begin{valdescrip}
+			\item[(R, G, B)] [default is black = `(0, 0, 0)']
+		\end{valdescrip}
+
+\pagebreak
+
+	\item[textcolor] The color of tip and node labels.
+		\begin{valdescrip}
+			\item[(R, G, B)] (default is black)
+		\end{valdescrip}
+
+	\item[tipnamestatecolor] Whether to color the tip text according to the tip state.
+		\begin{valdescrip}
+			\item[yes] base tip name color on state
+			\item[no] use \texttt{textcolor} for tip names (default)
+		\end{valdescrip}
+
+	\item[linecolor] The color of the branches of the tree and other lines.
+		\begin{valdescrip}
+			\item[(R, G, B)] (default is black)
+		\end{valdescrip}
+
+	\item[backcolor] The color of the background.
+		\begin{valdescrip}
+			\item[(R, G, B)] (default is transparent for PNG, white otherwise)
+		\end{valdescrip}
+
+	\item[rimthick] The thickness of the lines around the pies and boxes.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is 2)
+		\end{valdescrip}
+
+	\item[linethick] The thickness of the branch lines.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is 1)
+		\end{valdescrip}
+
+	\item[width] The width of the canvas; determines the horizontal scaling of the image.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is 800)
+		\end{valdescrip}
+
+	\item[height] The height of the canvas; doesn't affect the scaling of the image.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is determined by the tree size)
+		\end{valdescrip}
+% TODO: notes for radial (default is width, otherwise cut off or whitespace)
+
+	\item[xmargin] The margin size on the left and right of the image.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is 20)
+		\end{valdescrip}
+
+	\item[ymargin] The margin size on the top and bottom of the image.
+		\begin{valdescrip}
+			\item[]  any number $\ge 0$ (default is 10)
+		\end{valdescrip}
+% TODO: notes on margins for radial
+
+\end{optdescrip}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section*{Procedural stuff}
+\addcontentsline{toc}{section}{Procedural stuff}
+
+\subsection*{Bugs and help}
+\addcontentsline{toc}{subsection}{Bugs and help}
+
+I've done my best to make this code correct and robust, but bugs happen.
+If you encounter a bug, either an unexplainable crash or a result that seems incorrect, please let me know.
+You can send just a good description of the problem with enough information for me to reproduce it, or a patch if you have one.
+
+I hope this code will be useful for other people, so if you have read the instructions here but are still having problems getting things working, just let me know and I will try to help.
+I would also be happy to hear if you have usability suggestions (e.g.\ making the documentation clearer or error-checking during use of the program), ideas for additional features that would be useful, or if you are making substantial changes to take the code in a new direction.
+Improvements to the Installation section would be very much appreciated.
+And of course I would be especially glad to hear if the program just worked for your purposes!
+
+\subsection*{License}
+\addcontentsline{toc}{subsection}{License}
+
+This software is issued under the Gnu Public License (\texttt{http://www.gnu.org/licenses/gpl.html}).  The full text of the license is included with the code, but the gist of it is (1) you can do whatever you want with this code and modify it however you like, and (2) if you redistribute this code or your modified version, it must also be under the GPL.
+
+
+\end{document}
