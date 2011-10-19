@@ -8,6 +8,13 @@
 % my .sty file defining the environments filesays, commandis, tightlist
 \usepackage{codedoc}
 
+\usepackage[big,compact]{titlesec}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\itshape\bfseries}
+\titleformat*{\subsubsection}{\itshape}
+
+\usepackage{tocloft}
+
 \usepackage{xspace}
 
 \newcommand{\PT}{\texttt{PieTree}\xspace}
@@ -25,7 +32,7 @@
 \title{
 	\vspace{-20pt}
 	\Large{ {\bf PieTree} Manual} \\
-	\large{ version 0.2 } 
+	\large{ version 0.3.2 } 
 }
 \author{
 	\large{Emma Goldberg} \\
@@ -50,9 +57,10 @@ It doesn't do any kind of analysis---it just produces images.
 \subsection*{History}
 \addcontentsline{toc}{subsection}{History}
 
-The first incarnation of \PT was written in C by Walter Brisken in December, 2007.
-In April, 2008, I rewrote it all in Python (as an excuse to practice Python and learn about the Cairo graphics library), gave it a more useable interface, and made the output as bulletproof as I could.
-I'm hoping to recruit beta-testers now.
+The first incarnation of \PT (v0.1) was written in C by Walter Brisken in December, 2007.
+In April, 2008, I rewrote it all in Python (as an excuse to practice Python and learn about the Cairo graphics library) and gave it a more useable interface (v0.2).
+I added radial plotting capabilities a year later (v0.3).
+Beta-testers would be very welcome!
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,7 +74,7 @@ If you get it working, please tell me what you did so I can pass the info along.
 \subsection*{Dependencies}
 \addcontentsline{toc}{subsection}{Dependencies}
 
-To use \PT, you will need the Cairo graphics library (\texttt{cairographics.org}; I used version 1.4.2), the Python programming language (\texttt{python.org}; I used version 2.5.1), the Python package for Cairo, and the Python module \texttt{configparse} (\texttt{gustaebel.de/lars/configparse/}).
+To use \PT, you will need the Cairo graphics library (\texttt{cairographics.org}; version 1.4.x), the Python programming language (\texttt{python.org}; version 2.5.x), the Python package for Cairo, and the Python module \texttt{configparse} (\texttt{gustaebel.de/lars/configparse/}).
 
 Good places to start are \texttt{cairographics.org/download} and \texttt{python.org/download}.
 I have included a copy of \texttt{configparse.py} with my \PT files.
@@ -92,11 +100,28 @@ On Fedora, try
 	sudo yum install pycairo
 \end{commandis}
 
+
 \subsubsection*{Mac OS X}
 \addcontentsline{toc}{subsubsection}{Mac OS X}
 
-Help, please.  
-Maybe take a look at \texttt{kenkeiter.com/2007/11/21/compiling-cairo-and-pycairo-on-os-x/}
+These instructions are courtesy of Lesley Lancaster, for Leopard 10.5.7 in Aug 2009 (and corrected by a MacPorts manager).
+\begin{enumerate}
+
+\item Install developer tools for Mac: \texttt{ http://developer.apple.com/technology/Xcode.html}
+
+\item Install MacPorts: \texttt{ http://www.macports.org/}
+
+\item Install py25-cairo using MacPorts.  In a terminal window, type: \texttt{sudo port install py25-cairo}
+
+% \item Install Darwin Ports: \texttt{ http://darwinports.com/}
+% \item Install Darwin Ports: \texttt{http://py25-cairo.darwinports.com/}
+% \item See \texttt{ http://py25-cairo.darwinports.com/}.
+% In a terminal window, type: \texttt{sudo port install py25-cairo}
+% \item Follow additional instructions that appear in terminal window to make Python 2.5 the default version.
+
+%\item When that is done, type: \texttt{sudo port install py25-scipy}
+\end{enumerate}
+
 
 \subsubsection*{Windows}
 \addcontentsline{toc}{subsubsection}{Windows}
@@ -112,8 +137,9 @@ In the \texttt{src/} directory are a few \texttt{.py} files, including the main 
 
 Remember where you put this whole directory---you will either need to add it to your path or include the full path when you execute \PT.  In this document, I'll write it as \PTpath.
 I found it useful to create the file shown below to add \PT to my Python path:
+
 \begin{filesays}{/usr/lib/python2.5/site-packages/PieTree.pth}
-	/home/emma/src/PieTree-0.2/src/
+	/home/emma/src/PieTree-0.3.2/src/
 \end{filesays}
 
 
@@ -125,7 +151,7 @@ I found it useful to create the file shown below to add \PT to my Python path:
 \subsection*{Quick start}
 \addcontentsline{toc}{subsection}{Quick start}
 
-\texttt{PieTree-0.2/examples/} contains a sample tree file called \texttt{example.ttn}.
+\texttt{PieTree-0.3.2/examples/} contains a sample tree file called \texttt{example.ttn}.
 If you execute
 \begin{commandis}
 	\PTpath example.ttn
@@ -143,8 +169,6 @@ You will need to create a plain text file containing your tree and character sta
 It's a very simple format: first a Newick string for the tree, including tip and node labels and branch lengths, and then a list of the tip/node labels and their corresponding character state values, one per line.
 
 A minimalist example is
-
-\pagebreak
 
 \begin{filesays}{minimal.ttn}
 	\# this is a comment   \\
@@ -201,7 +225,9 @@ and then to specify that file on the command line:
 \begin{commandis}
 	\PTpath \ --opt opts.pie example.ttn
 \end{commandis}
-In option files, the = sign is required but spaces around it are fine.  Color strings still need to be surrounded by quotes.
+In option files, the = sign is required but spaces around it are fine.
+Color strings still need to be surrounded by quotes.
+Filenames with hyphens also need quotes around them, e.g.\ \texttt{outfile = "pretty-tree.pdf"}.
 
 If an option is given in both the input file and on the command line, the command line value takes effect.
 \begin{commandis}
@@ -228,7 +254,6 @@ Again, to get a quick (and possibly more up-to-date) summary, type:
 	\item[opt] A file containing your desired option values.  Use one line per value, each in the form {\texttt option = value}.
 
 	\item[outfile] A name for the output file.  If it doesn't have a suffix (like \texttt{.pdf}), an appropriate one will be appended. [default is \texttt{pietree}]
-% TODO: note that radial looks best in pdf and svg
 
 	\item[outformat] The file format of the output image.  If you also specify an \texttt{outfile} with a suffix, \texttt{outformat} takes precedence and an appropriate suffix will be appended.
 		\begin{valdescrip}
@@ -238,7 +263,11 @@ Again, to get a quick (and possibly more up-to-date) summary, type:
 			\item[png] portable network graphics (lossless bitmap)
 		\end{valdescrip}
 
-% TODO: shape = rect (default) or radial
+	\item[shape] The shape in which the tree is drawn.
+		\begin{valdescrip}
+			\item[rect] rectangular, with all the tips on the right (the default)
+			\item[radial] radial, with the tips along the outside of a circle (note that \texttt{pdf} and \texttt{svg} output looks best for this)
+		\end{valdescrip}
 
 	\item[pieradius] The radius of the pie chart showing the node reconstruction.
 		\begin{valdescrip}
@@ -287,8 +316,6 @@ Again, to get a quick (and possibly more up-to-date) summary, type:
 			\item[(R, G, B)] [default is black = `(0, 0, 0)']
 		\end{valdescrip}
 
-\pagebreak
-
 	\item[textcolor] The color of tip and node labels.
 		\begin{valdescrip}
 			\item[(R, G, B)] (default is black)
@@ -327,9 +354,8 @@ Again, to get a quick (and possibly more up-to-date) summary, type:
 
 	\item[height] The height of the canvas; doesn't affect the scaling of the image.
 		\begin{valdescrip}
-			\item[]  any number $\ge 0$ (default is determined by the tree size)
+			\item[]  any number $\ge 0$ (default is determined by the tree size for \texttt{shape = rect} or is \texttt{width} for \texttt{shape = radial})
 		\end{valdescrip}
-% TODO: notes for radial (default is width, otherwise cut off or whitespace)
 
 	\item[xmargin] The margin size on the left and right of the image.
 		\begin{valdescrip}
@@ -340,9 +366,8 @@ Again, to get a quick (and possibly more up-to-date) summary, type:
 		\begin{valdescrip}
 			\item[]  any number $\ge 0$ (default is 10)
 		\end{valdescrip}
-% TODO: notes on margins for radial
-
 \end{optdescrip}
+For \texttt{shape = radial}, the left and right margins are based on the longest tip name and the top and bottom margins are best controlled with \texttt{height}.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
