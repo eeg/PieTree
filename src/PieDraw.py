@@ -21,8 +21,8 @@
 
 ######################################################
 # Module:  PieDraw.py
-# Author:  Emma Goldberg, based on Walter Brisken's PieTree.c
-# Date:	 Apr, 2008
+# Author:  Emma Goldberg
+# Date:	 Nov, 2011 (orig Apr 2008)
 ######################################################
 
 '''

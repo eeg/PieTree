@@ -22,7 +22,7 @@
 ######################################################
 # Module:  PieTree.py
 # Author:  Emma Goldberg, based on Walter Brisken's PieTree.c
-# Date:	 Apr, 2009 (orig Apr 2008)
+# Date:	 Nov, 2011 (orig Apr 2008)
 ######################################################
 
 '''
@@ -33,7 +33,8 @@ Produce a pretty picture of it.
 import sys
 import cairo
 
-import PieInputOptions
+# import PieInputOptions
+import PieInput
 import PieDraw
 import PieDrawRadial
 import PieReadTree
@@ -41,28 +42,17 @@ import PieReadTree
 
 def main():
 
-	cmd_line = PieInputOptions.ParseCmdLine()
-
-	### read in the tree file ###
-
-	treefile = cmd_line[1][0]
-	root = PieReadTree.ReadFromFileTTN(treefile)
-	if root == -1:
-		sys.exit()
-
-	### set the rest of the config values ###
-
-	c = cmd_line[0]
+	(c, root) = PieInput.ParseInput()
 
 	numtips = PieReadTree.CountTips(root)
-	PieInputOptions.SetDefaults(c, numtips)
+	PieInput.SetDefaults(c, numtips)
 
-	c.color0 = PieInputOptions.ParseRGBColor(c.color0)
-	c.color1 = PieInputOptions.ParseRGBColor(c.color1)
-	c.linecolor = PieInputOptions.ParseRGBColor(c.linecolor)
-	c.textcolor = PieInputOptions.ParseRGBColor(c.textcolor)
+	c.color0 = PieInput.ParseRGBColor(c.color0)
+	c.color1 = PieInput.ParseRGBColor(c.color1)
+	c.linecolor = PieInput.ParseRGBColor(c.linecolor)
+	c.textcolor = PieInput.ParseRGBColor(c.textcolor)
 	if c.backcolor != None:
-		c.backcolor = PieInputOptions.ParseRGBColor(c.backcolor)
+		c.backcolor = PieInput.ParseRGBColor(c.backcolor)
 
 	### set up the drawing surface ###
 
@@ -130,11 +120,10 @@ def main():
 
 		### assign (x, y) coordinates to each node ###
 
-		ntips = PieReadTree.CountTips(root)
 		# todo: scale radius to root-to-tip length?
 
 		rmax = [-1]
-		PieDrawRadial.CalcRT(root, 0, 0, rmax, ntips)
+		PieDrawRadial.CalcRT(root, 0, 0, rmax, numtips)
 		# the .r and .t attributes of nodes were just created
 
 		PieDrawRadial.RTtoXY(root)

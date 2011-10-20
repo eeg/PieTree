@@ -35,6 +35,7 @@ Also contains CountTips()
 import sys
 import Newick
 
+# TODO: will want each node to have a *vector* for its state(s); need to check the lengths are consistent and return the number of states
 
 def ReadFromFileTTN(filename):
 	'''
