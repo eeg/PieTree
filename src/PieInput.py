@@ -36,7 +36,9 @@ import os
 import argparse
 import ConfigParser
 
+from PieError import PieTreeError
 import PieReadTree
+
 
 # NOTE: In the opt file, the first line should be [pietree].  Instead, to fake the config file section header, see http://stackoverflow.com/questions/2819696/parsing-properties-file-in-python/2819788#2819788
 
@@ -58,39 +60,42 @@ def ParseInput():
 	parser1.add_argument("--optfile", \
 			help="config file containing options")
 
-	(args, remaining_argv) = parser1.parse_known_args()
+	(ap, remaining_argv) = parser1.parse_known_args()
 
-	if args.optfile:
+	# ap = input read by argparse
+	# cp = input read by ConfigParse
+
+	if ap.optfile:
 		config = ConfigParser.SafeConfigParser()
-		config.read(args.optfile)
+		config.read(ap.optfile)
 		try:
-			from_config = dict(config.items("pietree"))
+			cp = dict(config.items("pietree"))
 		except ConfigParser.NoSectionError:
-			print "\nERROR: The first line of the config file '" + \
-					args.optfile + "' must be [pietree].\n"
-			sys.exit()
+			# print '\nERROR: The first line of the config file "' + \
+			#           ap.optfile + '" must be: [pietree]\n'
+			raise PieTreeError('The first line of the config file "' + ap.optfile + '" must be: [pietree]')
 	else:
-		from_config = {}
+		cp = {}
 
 	# the tree filename; command line takes precedence
-	if args.treefile:
-		treefile = args.treefile
-	elif "treefile" in from_config:
-		treefile = from_config["treefile"]
+	if ap.treefile:
+		treefile = ap.treefile
+	elif "treefile" in cp:
+		treefile = cp["treefile"]
 	else:
 		treefile = None
 
-	print treefile
 	if treefile:
-		root = PieReadTree.ReadFromFileTTN(treefile)
-		if root == -1:
-			print "\nERROR: failed to read tree from file " + treefile + "\n"
-			nstates = 1    # TODO: make this 2, for the help message
+		(root, nstates) = PieReadTree.ReadFromFileTTN(treefile)
+		if not root:
+			errmsg = 'Failed to read tree from file "' + treefile + '"'
+			nstates = 0
 		else:
-			nstates = 2    # TODO: get this from the input file
+			ntips = PieReadTree.CountTips(root)
 	else:
-		root = -1
-		nstates = 1
+		root = None
+		errmsg = "treefile not specified"
+		nstates = 0
 
 	# Now that we know how many states there are, we can parse the rest of the
 	# options.  (The number of states was really only needed to know how many
@@ -101,13 +106,57 @@ def ParseInput():
 			description=__doc__)
 			#formatter_class=argparse.RawDescriptionHelpFormatter)
 
-	for i in range(nstates):
-		parser.add_argument("--color"+str(i), help="color of state "+str(i)+": (red, green, blue) triplet")
+	# add most of the input options
+	format_choices = ("pdf", "ps", "svg", "png")
+	AddParserArgs(parser, nstates, format_choices)
+
+	# Abort if critical input is missing.  (Can't do this earlier because need
+	# to prepare arguments for help message.)
+	if not root:
+	    parser.print_usage()
+	    raise PieTreeError(errmsg)
+
+	# Otherwise, if all input is provided, carry on...
+
+	if cp:
+		parser.set_defaults(**cp)
+	ap = parser.parse_args(remaining_argv)
+	SetDefaults(ap, ntips)
+
+	# adjust the outfile name and outformat as necessary
+
+	suffix = ap.outfile.split(".")[-1]
+
+	if suffix.lower() not in format_choices:
+		if ap.outformat == None:
+			ap.outformat = "pdf"
+		ap.outfile = ap.outfile + "." + ap.outformat
+
+	else:
+		if ap.outformat == None:
+			ap.outformat = suffix.lower()
+		elif suffix.lower() != ap.outformat:
+			print "WARNING: outfile suffix (%s) and " % (suffix),
+			print "outformat (%s) don't match" % (ap.outformat)
+			ap.outfile = ap.outfile + "." + ap.outformat
+
+	return (ap, root, ntips, nstates)
+
+
+def AddParserArgs(parser, nstates, format_choices):
+	'''Set the main input options (besides treefile, optfile)'''
+
+	if nstates == 0:
+		parser.add_argument("--colorX", help="color of state X " \
+				"(specify for each of states = 0, 1, etc.): (red, green, blue) triplet")
+	else:
+		for i in range(nstates):
+			parser.add_argument("--color"+str(i), \
+					help="color of state "+str(i)+": (red, green, blue) triplet")
 
 	parser.add_argument("--outfile", \
 			help="file to which the resulting image is written")
 
-	format_choices = ("pdf", "ps", "svg", "png")
 	parser.add_argument("--outformat", \
 			choices = format_choices, help="image type to be created [" + 
 			", ".join(format_choices) + "]")
@@ -116,7 +165,8 @@ def ParseInput():
 	parser.add_argument("--shape", choices = shape_choices, \
 			help="tree shape [" + ", ".join(shape_choices) + "]")
 
-	parser.add_argument("--pieradius", type=float, help="radius of node reconstruction pie charts")
+	parser.add_argument("--pieradius", type=float, \
+			help="radius of node reconstruction pie charts")
 	parser.add_argument("--boxsize", type=float, \
 			help="height of tip state box")
 	parser.add_argument("--tipspacing", type=float, \
@@ -163,7 +213,7 @@ def ParseInput():
 
 	parser.set_defaults( \
 			outfile = "pietree", \
-			#outformat = "pdf", \	# see suffix stuff below
+			#outformat = "pdf", \	# see suffix stuff instead
 			shape = "rect", \
 			pieradius = 7.0, \
 			italic = "no", \
@@ -182,37 +232,9 @@ def ParseInput():
 			)
 	# see also SetDefaults()
 
-	if from_config:
-		parser.set_defaults(**from_config)
 
-	options = parser.parse_args(remaining_argv)
-
-	if len(sys.argv)==1:
-	    parser.print_usage()
-	    sys.exit()
-
-	### adjust the outfile name and outformat as necessary ###
-
-	suffix = options.outfile.split(".")[-1]
-
-	if suffix.lower() not in format_choices:
-		if options.outformat == None:
-			options.outformat = "pdf"
-		options.outfile = options.outfile + "." + options.outformat
-
-	else:
-		if options.outformat == None:
-			options.outformat = suffix.lower()
-		elif suffix.lower() != options.outformat:
-			print "WARNING: outfile suffix (%s) and " % (suffix),
-			print "outformat (%s) don't match" % (options.outformat)
-			options.outfile = options.outfile + "." + options.outformat
-
-	return (options, root)
-
-
-def SetDefaults(c, numtips):
-	'''set default config values that weren't taken care of in ParseInput'''
+def SetDefaults(c, ntips):
+	'''set default config values that weren't taken care of in AddParserArgs'''
 
 	if c.boxsize == None:
 		if c.pieradius == 0:
@@ -248,8 +270,7 @@ def SetDefaults(c, numtips):
 
 	if c.height == None:
 		if c.shape == "rect":
-			#c.height = (numtips + 1) * c.tipspacing	# original
-			c.height = numtips * c.tipspacing + 2*c.ymargin
+			c.height = ntips * c.tipspacing + 2*c.ymargin
 		else:
 			c.height = c.width
 
@@ -278,9 +299,8 @@ def ParseRGBColor(colstr):
 					failed = True
 
 	if failed:
-		print "ERROR: RGB colors should be specified like this:",
-		print '"(0, 0.5, 0.7)"'
-		sys.exit()
+		raise PieTreeError("RGB colors should be specified like this:" + \
+				'"(0, 0.5, 0.7)"')
 
 	else:
 		return collist

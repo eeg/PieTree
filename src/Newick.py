@@ -53,7 +53,7 @@ def Read(tree_string):
 	except NewickError, error:
 		print error.value
 		print "Bad Newick string.  Aborting in Newick.Read()..."
-		sys.exit()
+		sys.exit(1)
 
 	# the first live char must be a (, so skip to there
 	index = tree_string.find('(')
@@ -153,14 +153,14 @@ def ReadFromFile(filename):
 	'''
 	From the specified file, try to read in the first line as a Newick string.
 	Blank lines and ones beginning with # or [ are skipped.
-	Returns the root of the tree, or -1 if no tree was formed.
+	Returns the root of the tree, or None if no tree was formed.
 	'''
 
 	try:
 		infile = open(filename, "r")
 	except IOError:
-		print "ERROR: problem opening the file %s" % (filename)
-		return -1
+		return None
+		# raise NewickError("can't open the file " + filename)
 
 	# get the first non-blank, non-comment line in the file
 	while 1:
@@ -184,4 +184,4 @@ def ReadFromFile(filename):
 		except NewickError:
 			pass
 	else:
-		return -1
+		return None 

@@ -33,22 +33,31 @@ Produce a pretty picture of it.
 import sys
 import cairo
 
-# import PieInputOptions
 import PieInput
 import PieDraw
 import PieDrawRadial
 import PieReadTree
+from PieError import PieTreeError
 
 
-def main():
+def PieTree():
 
-	(c, root) = PieInput.ParseInput()
+	### work through the user input ###
 
-	numtips = PieReadTree.CountTips(root)
-	PieInput.SetDefaults(c, numtips)
+	(c, root, ntips, nstates) = PieInput.ParseInput()
 
-	c.color0 = PieInput.ParseRGBColor(c.color0)
-	c.color1 = PieInput.ParseRGBColor(c.color1)
+	# convert the state colors into a list
+	# TODO: default to black/white/N shades of gray; allow color names rather than RGB?
+	color = range(nstates)
+	for i in range(nstates):
+		cc = "c.color" + str(i)
+		if eval(cc) != None:
+			color[i] = PieInput.ParseRGBColor(eval(cc))
+			exec "del(" + cc + ")"
+		else:
+			raise PieTreeError(cc.split(".")[1] + " not specified")
+	c.color = color
+
 	c.linecolor = PieInput.ParseRGBColor(c.linecolor)
 	c.textcolor = PieInput.ParseRGBColor(c.textcolor)
 	if c.backcolor != None:
@@ -66,8 +75,7 @@ def main():
 		surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, \
 				int(c.width), int(c.height))
 	else:	# this should never happen, but just in case...
-		print "uh oh, output format not found"
-		sys.exit()
+		raise PieTreeError("output format not found")
 
 	cr = cairo.Context(surface)
 
@@ -98,6 +106,7 @@ def main():
 		PieDraw.MaxTipNameSize(cr, root, tipsize)
 		tipsize = tipsize[0]
 
+	### prepare the tree for drawing ###
 
 	if c.shape == "rect":
 
@@ -114,7 +123,7 @@ def main():
 		### do the actual drawing ###
 
 		PieDraw.DrawRoot(cr, c, root)
-		PieDraw.PlotTree(cr, c, root)
+		PieDraw.PlotTree(cr, c, root, nstates)
 
 	elif c.shape == "radial":
 
@@ -123,7 +132,7 @@ def main():
 		# todo: scale radius to root-to-tip length?
 
 		rmax = [-1]
-		PieDrawRadial.CalcRT(root, 0, 0, rmax, numtips)
+		PieDrawRadial.CalcRT(root, 0, 0, rmax, ntips)
 		# the .r and .t attributes of nodes were just created
 
 		PieDrawRadial.RTtoXY(root)
@@ -149,4 +158,10 @@ def main():
 
 
 if __name__ == "__main__":
-	main()
+
+	try:
+		PieTree()
+	except PieTreeError, error:
+		if error:
+			print "\n" + error.value + "\n"
+		sys.exit(1)

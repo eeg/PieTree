@@ -132,10 +132,13 @@ def DrawTip(cr, c, node):
 		cr.stroke_preserve()
 
 	# tip color
-	if node.state == 0:
-		cr.set_source_rgb(c.color0[0], c.color0[1], c.color0[2])
-	elif node.state == 1:
-		cr.set_source_rgb(c.color1[0], c.color1[1], c.color1[2])
+	if node.state in [0,1]:
+		i = int(node.state)
+		cr.set_source_rgb(c.color[i][0], c.color[i][1], c.color[i][2])
+	# if node.state == 0:
+	#      cr.set_source_rgb(c.color0[0], c.color0[1], c.color0[2])
+	# elif node.state == 1:
+	#      cr.set_source_rgb(c.color1[0], c.color1[1], c.color1[2])
 	else:
 		cr.set_source_rgb(0.5, 0.5, 0.5)
 		print "WARNING: check the state of %s" % node.label
@@ -178,7 +181,7 @@ def DrawPie(cr, c, node):
 	# the pie piece for state 0
 	angle0 = (1. - node.state) * 2 * M_PI - M_PI/2
 	if node.state != 1:
-		cr.set_source_rgb(c.color0[0], c.color0[1], c.color0[2])
+		cr.set_source_rgb(c.color[0][0], c.color[0][1], c.color[0][2])
 		cr.move_to(0, 0)
 		#cr.arc(x, y, R, -M_PI/2, angle0)
 		cr.arc(0, 0, R, -M_PI/2, angle0)
@@ -187,7 +190,7 @@ def DrawPie(cr, c, node):
 	# the pie piece for state1
 	angle1 = node.state * 2 * M_PI
 	if node.state != 0:
-		cr.set_source_rgb(c.color1[0], c.color1[1], c.color1[2])
+		cr.set_source_rgb(c.color[1][0], c.color[1][1], c.color[1][2])
 		cr.move_to(0, 0)
 		#cr.arc(x, y, R, angle0, angle0+angle1)
 		cr.arc(0, 0, R, angle0, angle0+angle1)
