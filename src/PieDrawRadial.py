@@ -91,11 +91,11 @@ def Xform(c, xy_in):
 #-------------------------------------------------- 
 
 
-def PlotTree(cr, c, node):
+def PlotTree(cr, c, node, nstates):
 	'''calls the drawing functions for the rest of the tree, and recurses'''
 
 	if node.daughters == None:
-		DrawTip(cr, c, node)
+		DrawTip(cr, c, node, nstates)
 
 	else:
 		DrawFork(cr, c, node)
@@ -103,15 +103,15 @@ def PlotTree(cr, c, node):
 			if node.state == None:
 				print "WARNING: state not specified for %s" % (node.label)
 			else:
-				DrawPie(cr, c, node)
+				DrawPie(cr, c, node, nstates)
 		if c.nodenamesize > 0:
 			DrawNodeLabel(cr, c, node)
 
 		for d in node.daughters:
-			PlotTree(cr, c, d)
+			PlotTree(cr, c, d, nstates)
 
 
-def DrawTip(cr, c, node):
+def DrawTip(cr, c, node, nstates):
 	'''draw the tip box, border, and label'''
 
 	# the tip box
@@ -132,13 +132,9 @@ def DrawTip(cr, c, node):
 		cr.stroke_preserve()
 
 	# tip color
-	if node.state in [0,1]:
-		i = int(node.state)
+	if node.state in range(nstates):
+		i = node.state
 		cr.set_source_rgb(c.color[i][0], c.color[i][1], c.color[i][2])
-	# if node.state == 0:
-	#      cr.set_source_rgb(c.color0[0], c.color0[1], c.color0[2])
-	# elif node.state == 1:
-	#      cr.set_source_rgb(c.color1[0], c.color1[1], c.color1[2])
 	else:
 		cr.set_source_rgb(0.5, 0.5, 0.5)
 		print "WARNING: check the state of %s" % node.label
@@ -158,7 +154,7 @@ def DrawTip(cr, c, node):
 	cr.set_matrix(m)
 
 
-def DrawPie(cr, c, node):
+def DrawPie(cr, c, node, nstates):
 	'''draw the pie chart at each node'''
 
 	(x, y) = Xform(c, (node.x, node.y))
@@ -178,23 +174,17 @@ def DrawPie(cr, c, node):
 		cr.arc(0, 0, R, 0, 2*M_PI)
 		cr.stroke()
 
-	# the pie piece for state 0
-	angle0 = (1. - node.state) * 2 * M_PI - M_PI/2
-	if node.state != 1:
-		cr.set_source_rgb(c.color[0][0], c.color[0][1], c.color[0][2])
+	# the pie pieces
+	angle_start = -M_PI/2
+	for i in range(nstates):
+		angle_stop = node.state[i] * 2 * M_PI + angle_start
+		cr.set_source_rgb(c.color[i][0], c.color[i][1], c.color[i][2])
+		# cr.move_to(x, y)
 		cr.move_to(0, 0)
-		#cr.arc(x, y, R, -M_PI/2, angle0)
-		cr.arc(0, 0, R, -M_PI/2, angle0)
+		# cr.arc(x, y, R, angle_start, angle_stop)
+		cr.arc(0, 0, R, angle_start, angle_stop)
 		cr.fill()
-
-	# the pie piece for state1
-	angle1 = node.state * 2 * M_PI
-	if node.state != 0:
-		cr.set_source_rgb(c.color[1][0], c.color[1][1], c.color[1][2])
-		cr.move_to(0, 0)
-		#cr.arc(x, y, R, angle0, angle0+angle1)
-		cr.arc(0, 0, R, angle0, angle0+angle1)
-		cr.fill()
+		angle_start = angle_stop
 
 	cr.set_matrix(m)
 

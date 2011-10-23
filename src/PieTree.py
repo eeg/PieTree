@@ -144,7 +144,7 @@ def PieTree():
 		### do the actual drawing ###
 
 		#PieDrawRadial.DrawRoot(cr, c, root)
-		PieDrawRadial.PlotTree(cr, c, root)
+		PieDrawRadial.PlotTree(cr, c, root, nstates)
 
 	### misc final stuff ###
 
