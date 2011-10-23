@@ -35,7 +35,6 @@ import cairo
 
 import PieInput
 import PieDraw
-import PieDrawRadial
 import PieReadTree
 from PieError import PieTreeError
 
@@ -113,17 +112,16 @@ def PieTree():
 		### assign (x, y) coordinates to each node ###
 
 		xmax = [-1]
-		PieDraw.CalcXY(root, 0, 0.5, xmax) # adjusted i (was 0) for vertical spacing fix
+		PieDraw.CalcXY(root, 0, 0.5, xmax)
 		# the .x and .y attributes of nodes were just created
 
 		c.xmax = xmax[0]
-		#c.xscale = (c.width - 2*c.xmargin - c.boxsize - tipsize) / c.xmax
 		c.xscale = (c.width - 2*c.xmargin - c.boxsize - tipsize - c.pieradius) / c.xmax
 
 		### do the actual drawing ###
 
-		PieDraw.DrawRoot(cr, c, root)
-		PieDraw.PlotTree(cr, c, root, nstates)
+		PieDraw.DrawRoot(cr, c, root, PieDraw.Xform_rect)
+		PieDraw.PlotTree(cr, c, root, nstates, PieDraw.Xform_rect)
 
 	elif c.shape == "radial":
 
@@ -132,10 +130,10 @@ def PieTree():
 		# todo: scale radius to root-to-tip length?
 
 		rmax = [-1]
-		PieDrawRadial.CalcRT(root, 0, 0, rmax, ntips)
+		PieDraw.CalcRT(root, 0, 0, rmax, ntips)
 		# the .r and .t attributes of nodes were just created
 
-		PieDrawRadial.RTtoXY(root)
+		PieDraw.RTtoXY(root)
 		# the .x and .y attributes of nodes were just created
 
 		c.xmax = rmax[0] * 2
@@ -143,8 +141,7 @@ def PieTree():
 
 		### do the actual drawing ###
 
-		#PieDrawRadial.DrawRoot(cr, c, root)
-		PieDrawRadial.PlotTree(cr, c, root, nstates)
+		PieDraw.PlotTree(cr, c, root, nstates, PieDraw.Xform_radial)
 
 	### misc final stuff ###
 

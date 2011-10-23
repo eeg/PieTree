@@ -31,6 +31,7 @@ Do the actual drawing.
 '''
 
 from math import pi as M_PI
+from math import cos, sin
 
 
 #--------------------------------------------------
@@ -66,9 +67,7 @@ def CalcXY(node, x, i, xmax):
 	if node.daughters == None:
 		node.y = i
 		i += 1
-		#return i
 	else:
-		#node.y = (node.daughters[0].y + node.daughters[1].y) / 2.
 		sum_y = 0.0
 		for d in node.daughters:
 			sum_y += d.y
@@ -77,7 +76,44 @@ def CalcXY(node, x, i, xmax):
 	return i
 
 
-def Xform(c, xy_in):
+def CalcRT(node, r, i, rmax, ntips):
+	'''compute the (r, theta) coordinates for each tip and node'''
+
+	if node.length != None:
+		r += node.length
+	node.r = r
+
+	if r > rmax[0]:
+		rmax[0] = r
+
+	if node.daughters != None:
+		for d in node.daughters:
+			i = CalcRT(d, r, i, rmax, ntips)
+
+	if node.daughters == None:
+		node.t = 2 * M_PI * i / ntips
+		i += 1
+	else:
+		sum_t = 0.0
+		for d in node.daughters:
+			sum_t += d.t
+		node.t = sum_t / len(node.daughters)
+
+	return i
+
+
+def RTtoXY(node):
+	'''convert polar to cartesian coordinates'''
+
+	if node.daughters != None:
+		for d in node.daughters:
+			RTtoXY(d)
+
+	node.x = node.r * cos(node.t)
+	node.y = node.r * sin(node.t)
+
+
+def Xform_rect(c, xy_in):
 	'''transform (x, y) coordinates from tree to canvas'''
 	# note: xy_in should be an (x, y) tuple
 
@@ -85,39 +121,54 @@ def Xform(c, xy_in):
 			c.ymargin + xy_in[1] * c.tipspacing)
 
 
+def Xform_radial(c, xy_in):
+	'''transform (x, y) coordinates from tree to canvas'''
+	# note: xy_in should be an (x, y) tuple
+
+	return (xy_in[0] * c.xscale + c.width/2., xy_in[1] * c.xscale + c.height/2.)
+
+
 #--------------------------------------------------
 # for the drawing
 #-------------------------------------------------- 
 
 
-def PlotTree(cr, c, node, nstates):
+def PlotTree(cr, c, node, nstates, Xform):
 	'''calls the drawing functions for the rest of the tree, and recurses'''
 
 	if node.daughters == None:
-		DrawTip(cr, c, node, nstates)
+		DrawTip(cr, c, node, nstates, Xform)
 
 	else:
-		DrawFork(cr, c, node)
+		DrawFork(cr, c, node, Xform)
 		if c.pieradius > 0:
-			if node.state == None:
-				print "WARNING: state not specified for %s" % (node.label)
+			if node.state != None:
+				DrawPie(cr, c, node, nstates, Xform)
 			else:
-				DrawPie(cr, c, node, nstates)
+				# print "WARNING: state not specified for %s" % (node.label)
+				pass
 		if c.nodenamesize > 0:
-			DrawNodeLabel(cr, c, node)
+			DrawNodeLabel(cr, c, node, Xform)
 
 		for d in node.daughters:
-			PlotTree(cr, c, d, nstates)
+			PlotTree(cr, c, d, nstates, Xform)
 
 
-def DrawTip(cr, c, node, nstates):
+def DrawTip(cr, c, node, nstates, Xform):
 	'''draw the tip box, border, and label'''
 
 	# the tip box
 	(x, y) = Xform(c, (node.x, node.y))
 	delta = c.boxsize
 
-	cr.rectangle(x - delta/2., y-delta/2., delta, delta)
+	if c.shape == "radial":
+		# get_matrix here and set_matrix below take care of the rotation
+		m = cr.get_matrix()
+		cr.translate(x, y)
+		cr.rotate(node.t)
+		cr.rectangle(0, -delta/2., delta, delta)
+	else:
+		cr.rectangle(x - delta/2., y-delta/2., delta, delta)
 
 	# box border
 	if c.rimthick > 0 and c.boxsize > 0:
@@ -144,14 +195,23 @@ def DrawTip(cr, c, node, nstates):
 		# TODO: make replacing underscores an option
 		#cr.show_text(node.label)
 		cr.show_text((node.label).replace("_", " "))
-	# vertical alignment of text may not be quite right
+
+	if c.shape == "radial":
+		cr.set_matrix(m)
 
 
-def DrawPie(cr, c, node, nstates):
+def DrawPie(cr, c, node, nstates, Xform):
 	'''draw the pie chart at each node'''
 
 	R = c.pieradius
 	(x, y) = Xform(c, (node.x, node.y))
+
+	if c.shape == "radial":
+		# get_matrix here and set_matrix below take care of the rotation
+		m = cr.get_matrix()
+		cr.translate(x, y)
+		cr.rotate(node.t)
+		(x, y) = (0, 0)
 
 	# the outer circle of the pie
 	if c.rimthick > 0:
@@ -171,38 +231,72 @@ def DrawPie(cr, c, node, nstates):
 		cr.fill()
 		angle_start = angle_stop
 
+	if c.shape == "radial":
+		cr.set_matrix(m)
 
-def DrawFork(cr, c, node):
-	'''draw the (rectangular) fork to the node's daughters'''
+
+def DrawFork(cr, c, node, Xform):
+	'''draw the fork to the node's daughters'''
 
 	cr.set_line_width(c.linethick)
 	cr.set_source_rgb(c.linecolor[0], c.linecolor[1], c.linecolor[2])
 
 	(x0, y0) = Xform(c, (node.x, node.y))
 
-	for d in node.daughters:
-		(x, y) = Xform(c, (d.x, d.y))
-		cr.move_to(x0, y0)
-		cr.line_to(x0, y)
-		cr.line_to(x, y)
+	if c.shape == "rect":
+		for d in node.daughters:
+			(x, y) = Xform(c, (d.x, d.y))
+			cr.move_to(x0, y0)
+			cr.line_to(x0, y)
+			cr.line_to(x, y)
+			cr.stroke()
+	else:
+		(mint, maxt) = (2*M_PI, 0)
+		for d in node.daughters:
+
+			if d.t < mint:
+				mint = d.t
+			if d.t > maxt:
+				maxt = d.t
+
+			(xd, yd) = Xform(c, (d.x, d.y))
+			xa = node.r * cos(d.t)
+			ya = node.r * sin(d.t)
+			(xb, yb) = Xform(c, (xa, ya))
+
+			cr.move_to(xd, yd)
+			cr.line_to(xb, yb)
+			cr.stroke()
+
+		cr.arc(c.width/2., c.height/2., node.r*c.xscale, mint, maxt)
 		cr.stroke()
 
 
-def DrawNodeLabel(cr, c, node):
+def DrawNodeLabel(cr, c, node, Xform):
 	'''put text labels by nodes'''
 
 	(x, y) = Xform(c, (node.x, node.y))
-	#cr.set_source_rgb(c.linecolor[0], c.linecolor[1], c.linecolor[2])
+
 	cr.set_source_rgb(c.textcolor[0], c.textcolor[1], c.textcolor[2])
 	cr.set_font_size(c.nodenamesize)
+
+	if c.shape == "radial":
+		# get_matrix here and set_matrix below take care of the rotation
+		m = cr.get_matrix()
+		cr.translate(x, y)
+		cr.rotate(node.t)
+
 	if node.label != None:
+		(x, y) = (0, 0)
 		textheight = cr.text_extents(node.label)[3]
-		#cr.move_to(x + c.pieradius + c.boxsize/4., y + textheight/2.)
 		cr.move_to(x + c.pieradius + c.tipspacing/5., y + textheight/2.)
 		cr.show_text(node.label)
 
+	if c.shape == "radial":
+		cr.set_matrix(m)
 
-def DrawRoot(cr, c, root):
+
+def DrawRoot(cr, c, root, Xform):
 	'''draw the branch leading to the root'''
 
 	(x0, y) = Xform(c, (0, root.y))
