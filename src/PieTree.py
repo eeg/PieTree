@@ -134,3 +134,12 @@ if __name__ == "__main__":
 		if error:
 			print "\n" + error.value + "\n"
 		sys.exit(1)
+
+### for scale bar, want to round root - longest-tip distance
+# def round_to_n(x, n):
+#      if n < 1:
+#          raise ValueError("number of significant digits must be >= 1")
+#      return "%.*e" % (n-1, x)
+
+
+# for docs: use sphinx
