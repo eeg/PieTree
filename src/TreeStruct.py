@@ -29,7 +29,6 @@
 #############################
 
 
-Nstates = 2
 _nodenum = 1   # for LabelNodes()
 
 
@@ -59,7 +58,7 @@ class TreeNode:
 			self.length = self.time - self.parent.time
 		else:
 			self.length = length
-		self.cl = [0]*Nstates	# will hold conditional likelihood values
+		# self.cl = [0]*Nstates	# will hold conditional likelihood values
 
 
 	def PrintNode(self):

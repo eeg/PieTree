@@ -34,16 +34,17 @@ import sys
 import cairo
 
 import PieInput
-import PieDraw
+import PieClasses
 import PieReadTree
 from PieError import PieTreeError
 
 
-def PieTree():
+def RunPieTree():
 
 	### work through the user input ###
 
 	(c, root, ntips, nstates) = PieInput.ParseInput()
+	# TODO: clean this up -- could create PieTreeXXX already
 
 	# convert the state colors into a list
 	# TODO: default to black/white/N shades of gray; allow color names rather than RGB?
@@ -95,53 +96,24 @@ def PieTree():
 	else:
 		cr.select_font_face("sans", cairo.FONT_SLANT_NORMAL)
 
-	### find the longest (widest) tip name ###
+
+	### now start working with the tree ###
+
+	if c.shape == "rect":
+		tree = PieClasses.PieTreeRect(root, ntips, nstates, cr, c)
+	elif c.shape == "radial":
+		tree = PieClasses.PieTreeRadial(root, ntips, nstates, cr, c)
+	else:	# this should never happen, but just in case...
+		raise PieTreeError("tree shape not found")
 
 	if c.tipnamesize == 0:
 		tipsize = 1e-10
 	else:
-		cr.set_font_size(c.tipnamesize)
-		tipsize = [-1]
-		PieDraw.MaxTipNameSize(cr, root, tipsize)
-		tipsize = tipsize[0]
+		tipsize = tree.MaxTipNameSize()
 
-	### prepare the tree for drawing ###
+	tree.CalcXY(tipsize)
+	tree.PlotTree()
 
-	if c.shape == "rect":
-
-		### assign (x, y) coordinates to each node ###
-
-		xmax = [-1]
-		PieDraw.CalcXY(root, 0, 0.5, xmax)
-		# the .x and .y attributes of nodes were just created
-
-		c.xmax = xmax[0]
-		c.xscale = (c.width - 2*c.xmargin - c.boxsize - tipsize - c.pieradius) / c.xmax
-
-		### do the actual drawing ###
-
-		PieDraw.DrawRoot(cr, c, root, PieDraw.Xform_rect)
-		PieDraw.PlotTree(cr, c, root, nstates, PieDraw.Xform_rect)
-
-	elif c.shape == "radial":
-
-		### assign (x, y) coordinates to each node ###
-
-		# todo: scale radius to root-to-tip length?
-
-		rmax = [-1]
-		PieDraw.CalcRT(root, 0, 0, rmax, ntips)
-		# the .r and .t attributes of nodes were just created
-
-		PieDraw.RTtoXY(root)
-		# the .x and .y attributes of nodes were just created
-
-		c.xmax = rmax[0] * 2
-		c.xscale = (c.width - 2*c.xmargin - 2*c.boxsize - 2*tipsize) / c.xmax
-
-		### do the actual drawing ###
-
-		PieDraw.PlotTree(cr, c, root, nstates, PieDraw.Xform_radial)
 
 	### misc final stuff ###
 
@@ -157,7 +129,7 @@ def PieTree():
 if __name__ == "__main__":
 
 	try:
-		PieTree()
+		RunPieTree()
 	except PieTreeError, error:
 		if error:
 			print "\n" + error.value + "\n"
