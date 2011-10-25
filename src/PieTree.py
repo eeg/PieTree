@@ -63,7 +63,7 @@ def RunPieTree():
 	if c.backcolor != None:
 		c.backcolor = PieInput.ParseRGBColor(c.backcolor)
 
-	### set up the drawing surface ###
+	# set up the drawing surface
 
 	if c.outformat == "pdf":
 		surface = cairo.PDFSurface(c.outfile, c.width, c.height)
@@ -79,13 +79,13 @@ def RunPieTree():
 
 	cr = cairo.Context(surface)
 
-	### set background color (defaults to white or transparent) ###
+	# set background color (defaults to white or transparent)
 
 	if c.backcolor != None:
 		cr.set_source_rgb(c.backcolor[0], c.backcolor[1], c.backcolor[2]);
 		cr.paint();
 
-	### set font face ###
+	# set font face
 
 	if c.serif == "yes" and c.italic == "yes":
 		cr.select_font_face("serif", cairo.FONT_SLANT_ITALIC)
@@ -131,7 +131,7 @@ if __name__ == "__main__":
 	try:
 		RunPieTree()
 	except PieTreeError, error:
-		if error:
+		if error.value != None:
 			print "\n" + error.value + "\n"
 		sys.exit(1)
 

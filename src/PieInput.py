@@ -40,7 +40,7 @@ from PieError import PieTreeError
 import PieReadTree
 
 
-# NOTE: In the opt file, the first line should be [pietree].  Instead, to fake the config file section header, see http://stackoverflow.com/questions/2819696/parsing-properties-file-in-python/2819788#2819788
+# In the opt file, the first line should be [pietree].  Instead, to fake the config file section header, see http://stackoverflow.com/questions/2819696/parsing-properties-file-in-python/2819788#2819788
 
 def ParseInput():
 	'''get all the user's specifications'''
@@ -52,7 +52,8 @@ def ParseInput():
 
 	parser1 = argparse.ArgumentParser(add_help=False)
 
-	parser1.add_argument('--version', action='version', version="PieTree 0.4, Nov 2011")
+	parser1.add_argument('--version', action='version', \
+			version="PieTree 0.4, Nov 2011")
 
 	parser1.add_argument("--treefile", \
 			help="TTN file with tree and states")
@@ -73,9 +74,12 @@ def ParseInput():
 		except ConfigParser.NoSectionError:
 			# print '\nERROR: The first line of the config file "' + \
 			#           ap.optfile + '" must be: [pietree]\n'
-			raise PieTreeError('The first line of the config file "' + ap.optfile + '" must be: [pietree]')
+			raise PieTreeError('The first line of the config file "' + \
+					ap.optfile + '" must be: [pietree]')
 	else:
 		cp = {}
+	# note: cp contains everything in the config file, potentially including
+	# irrelevant options
 
 	# the tree filename; command line takes precedence
 	if ap.treefile:
@@ -114,12 +118,16 @@ def ParseInput():
 	# to prepare arguments for help message.)
 	if not root:
 	    parser.print_usage()
-	    raise PieTreeError(errmsg)
+	    if len(sys.argv) > 1:
+		    raise PieTreeError(errmsg)
+	    else:
+		    raise PieTreeError(None)
 
 	# Otherwise, if all input is provided, carry on...
 
 	if cp:
 		parser.set_defaults(**cp)
+		# note: ** unpacks the dictionary into separate arguments
 	ap = parser.parse_args(remaining_argv)
 	SetDefaults(ap, ntips)
 

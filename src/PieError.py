@@ -27,6 +27,10 @@
 
 class PieTreeError(Exception):
 	def __init__(self, value):
-		self.value = "PieTree ERROR: " + value
+		if isinstance(value, str):
+			self.value = "PieTree ERROR: " + value
+		else:
+			self.value = None
 	def __str__(self):
-		return repr(self.value)
+		if self.value:
+			return repr(self.value)
