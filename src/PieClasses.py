@@ -127,9 +127,10 @@ class PieTree():
 			cr.set_font_size(c.tipnamesize)
 			textheight = cr.text_extents(node.label)[3]
 			cr.move_to(x + delta/2. + c.tipspacing/4., y + textheight/3.)
-			# TODO: make replacing underscores an option
-			#cr.show_text(node.label)
-			cr.show_text((node.label).replace("_", " "))
+			if c.underscorespace == "yes":
+				cr.show_text((node.label).replace("_", " "))
+			else:
+				cr.show_text(node.label)
 
 	def DrawPieMore(self, node, (x,y)):
 		'''Finish the work of DrawPie.'''
@@ -170,7 +171,10 @@ class PieTree():
 		if node.label != None:
 			textheight = cr.text_extents(node.label)[3]
 			cr.move_to(x + c.pieradius + c.tipspacing/5., y + textheight/2.)
-			cr.show_text(node.label)
+			if c.underscorespace == "yes":
+				cr.show_text((node.label).replace("_", " "))
+			else:
+				cr.show_text(node.label)
 
 
 #--------------------------------------------------
@@ -214,9 +218,8 @@ class PieTreeRect(PieTree):
 
 		xmax = [-1]
 		CXY(self.root, 0, 0.5, xmax)
-
 		c.xmax = xmax[0]
-		c.xscale = (c.width - 2*c.xmargin - c.boxsize - tipsize - \
+		c.xscale = (c.width - 2*c.xmargin - c.tipspacing - tipsize - \
 				c.pieradius) / c.xmax
 
 	def Xform(self, (x,y)):
@@ -341,8 +344,8 @@ class PieTreeRadial(PieTree):
 		RTtoXY(self.root)
 
 		c.xmax = rmax[0] * 2
-		c.xscale = (c.width - 2*c.xmargin - 2*c.boxsize - 2*tipsize) / c.xmax
-		# TODO: xscale should also have delta
+		c.xscale = (c.width - 2*c.xmargin - 2*c.tipspacing - 2*tipsize - \
+				2*c.pieradius) / c.xmax
 
 	def Xform(self, (x,y)):
 		'''transform (x, y) coordinates from tree to canvas'''

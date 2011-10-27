@@ -192,6 +192,9 @@ def AddParserArgs(parser, nstates, format_choices):
 	parser.add_argument("--serif", \
 			choices = yesno_choices, help="if text should be serif " + \
 			"(rather than sans-serif) [" + ", ".join(yesno_choices) + "]")
+	parser.add_argument("--underscorespace", \
+			choices = yesno_choices, help="if _ in tip/node names should " + \
+			"be replaced with a space [" + ", ".join(yesno_choices) + "]")
 
 	parser.add_argument("--textcolor", \
 			help="color of tip and node labels: (red, green, blue) triplet")  
@@ -226,6 +229,7 @@ def AddParserArgs(parser, nstates, format_choices):
 			pieradius = 7.0, \
 			italic = "no", \
 			serif = "no", \
+			underscorespace = "no", \
 			color0 = "(1.0, 1.0, 1.0)", \
 			color1 = "(0.0, 0.0, 0.0)", \
 			textcolor = "(0.0, 0.0, 0.0)", \
