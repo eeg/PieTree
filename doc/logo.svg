@@ -9,15 +9,15 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="584.55603"
-   height="135.168"
+   width="584.56"
+   height="185"
    id="svg2"
    version="1.1"
    inkscape:version="0.47 r22583"
    sodipodi:docname="logo.svg"
-   inkscape:export-filename="/home/emma/src/PieTree/doc/logo.png"
-   inkscape:export-xdpi="150"
-   inkscape:export-ydpi="150">
+   inkscape:export-filename="/home/emma/src/PieTree/doc/sphinx/_static/logo.png"
+   inkscape:export-xdpi="30.628551"
+   inkscape:export-ydpi="30.628551">
   <defs
      id="defs4">
     <inkscape:perspective
@@ -85,8 +85,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="292.40925"
-     inkscape:cy="71.562477"
+     inkscape:cx="177.5044"
+     inkscape:cy="71.562473"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -95,7 +95,7 @@
      inkscape:window-x="291"
      inkscape:window-y="0"
      inkscape:window-maximized="0"
-     showborder="false" />
+     showborder="true" />
   <metadata
      id="metadata7">
     <rdf:RDF>
@@ -112,7 +112,7 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-17.113637,-464.96859)">
+     transform="translate(-17.113637,-415.13658)">
     <g
        id="g3904"
        transform="matrix(2,0,0,2,-309.39163,-532.55258)">
