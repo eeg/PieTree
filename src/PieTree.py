@@ -67,7 +67,7 @@ def RunPieTree():
 
 	if c.outformat == "pdf":
 		surface = cairo.PDFSurface(c.outfile, c.width, c.height)
-	elif c.outformat == "ps":
+	elif c.outformat == "eps":
 		surface = cairo.PSSurface(c.outfile, c.width, c.height)
 	elif c.outformat == "svg":
 		surface = cairo.SVGSurface(c.outfile, c.width, c.height)

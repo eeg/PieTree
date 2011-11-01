@@ -25,7 +25,7 @@ import sys, os
 
 # Add any Sphinx extension module names here, as strings. They can be extensions
 # coming with Sphinx (named 'sphinx.ext.*') or your custom ones.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.todo', 'sphinx.ext.pngmath']
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -180,26 +180,39 @@ latex_elements = {
 'papersize': 'letterpaper',
 
 # The font size ('10pt', '11pt' or '12pt').
-'pointsize': '10pt',
+'pointsize': '11pt',
 
-# EEG: gets rid of blank pages
-'classoptions': ',openany,oneside',
-'babel': '\\usepackage[english]{babel}',
+# EEG: gets rid of blank pages in manual/report class
+# 'classoptions': ',openany,oneside',
+# 'babel': '\\usepackage[english]{babel}',
 
 # Additional stuff for the LaTeX preamble.
-#'preamble': '',
+# EEG: for howto class
+'preamble': ' \\pagestyle{normal} \\pagenumbering{arabic} \\fancyfoot[L]{{\\sffamily\\bfseries\\nouppercase{\\leftmark}}} \\setcounter{tocdepth}{3}',
+
+# 'footer': '\\thepage',
 }
 
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title, author, documentclass [howto/manual]).
+# latex_documents = [
+#   ('index', 'PieTree.tex', u'PieTree Documentation',
+#    u'Emma E. Goldberg', 'manual'),
+# ]
 latex_documents = [
-  ('index', 'PieTree.tex', u'PieTree Documentation',
-   u'Emma E. Goldberg', 'manual'),
+  ('index', 'PieTree.tex', u'PieTree',
+   u'Emma E. Goldberg', 'howto'),
 ]
+# EEG: could provide custom documentclass here?
+#      and/or via latex_additional_files
+
+# latex_docclass = {
+#   "howto" : "article", "manual" : "article"
+# }
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.
-#latex_logo = None
+latex_logo = '_static/logo.pdf'
 
 # For "manual" documents, if this is true, then toplevel headings are parts,
 # not chapters.

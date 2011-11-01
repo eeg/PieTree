@@ -62,9 +62,12 @@ def ParseInput():
 			help="config file containing options")
 
 	(ap, remaining_argv) = parser1.parse_known_args()
+	# can add an argument to be used instead of sys.argv -- might want to send this in with ParseInput, to facilitate testing and auto-generating docs
 
 	# ap = input read by argparse
 	# cp = input read by ConfigParse
+
+	# TODO: looks like argparse can use an input file; http://docs.python.org/library/argparse.html#fromfile-prefix-chars
 
 	if ap.optfile:
 		config = ConfigParser.SafeConfigParser()
@@ -111,7 +114,7 @@ def ParseInput():
 			#formatter_class=argparse.RawDescriptionHelpFormatter)
 
 	# add most of the input options
-	format_choices = ("pdf", "ps", "svg", "png")
+	format_choices = ("pdf", "eps", "svg", "png")
 	AddParserArgs(parser, nstates, format_choices)
 
 	# Abort if critical input is missing.  (Can't do this earlier because need
@@ -311,7 +314,7 @@ def ParseRGBColor(colstr):
 					failed = True
 
 	if failed:
-		raise PieTreeError("RGB colors should be specified like this:" + \
+		raise PieTreeError("RGB colors should be specified like this: " + \
 				'"(0, 0.5, 0.7)"')
 
 	else:

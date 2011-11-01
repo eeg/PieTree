@@ -1,14 +1,8 @@
-# warning: this color scheme is scary
+[pietree]
 outfile = example3
 shape = radial
-pieradius = 0
-boxsize = 15 
 tipnamesize = 0
 nodenamesize = 0
-color0 = "(0, 1, 1)"
-color1 = "(1, 0, 1)"
-linecolor = "(1, 1, 0)"
-backcolor = "(0, 0, 0)"
-rimthick = 0
-linethick = 3
-width = 500
+color0 = (0.44, 0.04, 0.67)
+color1 = (1, 0.34, 0)
+color2 = (0.24, 0.62, 0.82)

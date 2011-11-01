@@ -7,8 +7,10 @@ Manual for PieTree |version|
 ============================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
 
-   background.rst
-   installation.rst
+   preliminaries.rst
    usage.rst
+   treefile.rst
+   options.rst
+   examples.rst

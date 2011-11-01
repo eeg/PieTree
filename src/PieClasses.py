@@ -84,9 +84,8 @@ class PieTree():
 					if node.state != None:
 						tree.DrawPie(node)
 					else:
-						pass
-						# print "WARNING: state not specified for %s" \
-						#           % (node.label)
+						print "NOTE: state not specified for %s" \
+								% (node.label)
 
 				if tree.plot_vars.nodenamesize > 0:
 					tree.DrawNodeLabel(node)
