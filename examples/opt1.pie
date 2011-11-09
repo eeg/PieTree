@@ -1,8 +1,9 @@
+[pietree]
 outfile = example1
 pieradius = 7
 nodenamesize = 0
 italic = yes
 serif = yes
-color1 = "(0, 0.45, 0.70)"
-color0 = "(0.8, 0.4, 0)"
+color1 = (0, 0.45, 0.70)
+color0 = (0.8, 0.4, 0)
 rimthick = 0

@@ -53,4 +53,9 @@ Take a look at the results::
   $ PieTree --treefile example3.ttn --shape radial --color0 "(0.44,0.04,0.67)" \
     --color1 "(1,0.34,0)" --color2 "(0.24,0.62,0.82)" --tipnamesize 0 --nodenamesize 0
 
-.. image:: images/example3.*
+.. image:: trees/example3.*
+
+It's of course possible to produce a similar image directly in R.
+I don't think it looks quite as nice, however, and I find it much more frustrating to tweak things like spacing there.
+
+.. FIXME: R plotting example (see email to Lesley)

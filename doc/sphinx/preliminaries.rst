@@ -17,13 +17,22 @@ Its name comes from using a pie chart to show the probability of a node being in
 |PT| doesn't do any kind of analysis---it just produces images.
 Carrying out ancestral state reconstruction in another program and assembling the results for use with |PT| is illustrated in :ref:`treefile`.
 
-
 History
 -------
 
 The first incarnation of |PT| was written in C by Walter Brisken in 2007.
 In  2008, I rewrote it all in Python (as an excuse to practice Python and learn about the Cairo graphics library) and gave it a more useable interface.
 Features have been gradually accumulating since then.
+
+Feedback
+--------
+
+Please send bug reports, feature requests, and any other comments to me at eeg@uic.edu.
+
+License
+-------
+
+|PT| is released under the `GNU General Public License <http://www.gnu.org/licenses/>`_.
 
 
 Installation

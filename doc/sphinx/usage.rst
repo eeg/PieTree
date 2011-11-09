@@ -28,7 +28,7 @@ To use it (adjust paths as necessary)::
 
 The result, in the file ``pietree.pdf``, looks like this:
 
-.. image:: images/example2.*
+.. image:: trees/example2.*
 
 .. _usage-treefile:
 
