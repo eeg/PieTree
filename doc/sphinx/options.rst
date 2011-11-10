@@ -115,6 +115,7 @@ Graphical elements
   ``= "(R, G, B)"`` see :ref:`colornote` [default is transparent for ``outformat = png``, white otherwise]
 
 ``tipspacing``
+  Space between tip markers.
 
   ``=`` any positive number [default is 1.5 * ``boxsize``]
 

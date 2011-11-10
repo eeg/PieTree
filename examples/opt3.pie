@@ -1,8 +1,14 @@
 [pietree]
 outfile = example3
 shape = radial
-tipnamesize = 0
+backcolor = (0, 0, 0)
+linecolor = (1, 1, 0)
+color0 = (1, 0, 1)
+color1 = (0, 1, 1)
+rimthick = 0
+linethick = 3
+pieradius = 0
+boxsize = 15
 nodenamesize = 0
-color0 = (0.44, 0.04, 0.67)
-color1 = (1, 0.34, 0)
-color2 = (0.24, 0.62, 0.82)
+tipnamesize = 0
+width = 400

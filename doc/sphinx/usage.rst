@@ -20,15 +20,15 @@ If no input is provided, a usage message will be printed summarizing the availab
 Quick start
 ===========
 
-A sample tree file with a binary character, called ``example2.ttn``, is included.
+A sample tree file with a binary character, called ``tree2.ttn``, is included.
 To use it (adjust paths as necessary)::
 
-  $ PieTree --treefile PieTree/examples/example2.ttn
+  $ PieTree --treefile PieTree/examples/tree2.ttn
   created pietree.pdf
 
 The result, in the file ``pietree.pdf``, looks like this:
 
-.. image:: trees/example2.*
+.. image:: trees/example0.*
 
 .. _usage-treefile:
 
@@ -83,14 +83,14 @@ Command line
 On the command line, the name of an option is preceded with ``--``, and its value comes immediately after it, separated by a space or by ``=``.
 Extending the example above::
 
-  $ PieTree --treefile PieTree/examples/example2.ttn --shape=radial
+  $ PieTree --treefile PieTree/examples/tree2.ttn --shape=radial
 
 The color of each state is specified as an RGB triple, where each component is given a value between 0 and 1.
 On the command line, this string must be surrounded by quotes.
 For more details, see :ref:`colornote`.
 For example, to make state 0 be red::
 
-  $ PieTree --treefile PieTree/examples/example2.ttn --color0 "(1, 0, 0)"
+  $ PieTree --treefile PieTree/examples/tree2.ttn --color0 "(1, 0, 0)"
 
 Option file
 -----------
@@ -100,7 +100,7 @@ In such a file, the first line must be ``[pietree]``, and then each option is on
 For example::
 
   [pietree]
-  treefile = PieTree/examples/example2.ttn
+  treefile = PieTree/examples/tree2.ttn
   shape = radial
   color0 = (1, 0, 0)
   color1 = (0, 0.75, 0.75)

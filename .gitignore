@@ -2,3 +2,5 @@ pre-2010/
 *.pyc
 *.swp
 examples/pietree.pdf
+doc/sphinx/Makefile
+doc/sphinx/_build/

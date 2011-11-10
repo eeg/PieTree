@@ -1,4 +1,4 @@
 start with this:
 
-../src/PieTree.py --optfile opt3.pie --treefile example3.ttn
+../src/PieTree.py --optfile opt4.pie --treefile tree3.ttn
 

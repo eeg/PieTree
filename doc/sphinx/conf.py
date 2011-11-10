@@ -189,7 +189,7 @@ latex_elements = {
 
 # Additional stuff for the LaTeX preamble.
 # EEG: for howto class
-'preamble': ' \\pagestyle{normal} \\pagenumbering{arabic} \\fancyfoot[L]{{\\sffamily\\bfseries\\nouppercase{\\leftmark}}} \\setcounter{tocdepth}{3}',
+'preamble': ' \\pagestyle{normal} \\pagenumbering{arabic} \\fancyfoot[L]{{\\sffamily\\bfseries\\nouppercase{\\leftmark}}} \\fancyfoot[R]{\\thepage} \\setcounter{tocdepth}{3}',
 
 # 'footer': '\\thepage',
 }
@@ -206,10 +206,6 @@ latex_documents = [
 ]
 # EEG: could provide custom documentclass here?
 #      and/or via latex_additional_files
-
-# latex_docclass = {
-#   "howto" : "article", "manual" : "article"
-# }
 
 # The name of an image file (relative to this directory) to place at the top of
 # the title page.

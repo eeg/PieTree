@@ -5,20 +5,57 @@ Gallery of Examples
 *******************
 
 The files needed for each example here are included in ``PieTree/examples/``.
-The options for each plot style are in the specified configuration file (e.g., ``config1.pie``), and are also shown here as a command line call.
-The example tree & states files can also be downloaded separately:
 
-* :download:`example2.ttn <trees/example2.ttn>` (2 states, 42 tips)
-* :download:`example3.ttn <trees/example3.ttn>` (3 states, 164 tips)
+.. only:: html
 
-opt1.pie : example1.pdf
-opt3.pie : example3.pdf
-opt4.pie : example4.pdf
-opt5.pie : example5.pdf
+  The option files can also be downloaded below.
+  The tree-and-states files can also be downloaded here:
+  
+  * :download:`tree2.ttn <trees/tree2.ttn>` (2 states, 42 tips)
+  * :download:`tree3.ttn <trees/tree3.ttn>` (3 states, 164 tips)
 
-Example 3::
+Each example below is generated with a command like this::
 
-  $ PieTree --treefile example3.ttn --shape radial --color0 "(0.44,0.04,0.67)" \
-    --color1 "(1,0.34,0)" --color2 "(0.24,0.62,0.82)" --tipnamesize 0 --nodenamesize 0
-  or
-  $ PieTree --treefile example3.ttn --optfile config3.pie
+  $ PieTree --treefile tree2.ttn --optfile opt1.pie
+
+(or substitute the other ``treefile`` or a different ``optfile``).
+
+Example 1
+---------
+
+.. only:: html
+
+  Contents of :download:`option file 1 <trees/opt1.pie>`:
+
+.. literalinclude:: trees/opt1.pie
+.. image:: trees/example1.*
+
+Example 2
+---------
+
+.. only:: html
+
+  Contents of :download:`option file 2 <trees/opt2.pie>`:
+
+.. literalinclude:: trees/opt2.pie
+.. image:: trees/example2.*
+
+Example 3
+---------
+
+.. only:: html
+
+  Contents of :download:`option file 3 <trees/opt3.pie>`:
+
+.. literalinclude:: trees/opt3.pie
+.. image:: trees/example3.*
+
+Example 4
+---------
+
+.. only:: html
+
+  Contents of :download:`option file 4 <trees/opt3.pie>`:
+
+.. literalinclude:: trees/opt4.pie
+.. image:: trees/example4.*
