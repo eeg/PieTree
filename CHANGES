@@ -1,3 +1,13 @@
+0.4 (9 Nov 2011)
+------------------
+* Allows more than two states.  Note that the input file format is now 
+  a bit different for node states.
+* Option to draw a scale bar.
+* Changed option parser.  Note that command line syntax is now slightly 
+  different (--treefile), and option file must now start with "[pietree]".
+* Small bugfixes.
+* Fancy html and pdf manuals (thanks to sphinx).
+
 0.3.2 (17 Nov 2009)
 ------------------
 * Changed the Mac installation instructions at the request of a MacPorts
