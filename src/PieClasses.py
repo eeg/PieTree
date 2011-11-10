@@ -431,6 +431,7 @@ class PieTreeRadial(PieTree):
 
         cr.set_line_width(c.linethick)
         cr.set_source_rgb(c.linecolor[0], c.linecolor[1], c.linecolor[2])
+        cr.set_line_cap(cairo.LINE_CAP_ROUND)
 
         (x0, y0) = self.Xform( (node.x, node.y) )
 
