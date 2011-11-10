@@ -209,7 +209,7 @@ class PieTree():
         cr.stroke()
 
         # label
-        cr.move_to((x0 + x1 - tw[0]) / 2., y0)
+        cr.move_to((x0 + x1) / 2. - tw[0], y0)
         cr.set_font_size(c.scalebar["textsize"])
         cr.show_text(showme)
 
