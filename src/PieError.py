@@ -22,15 +22,15 @@
 ######################################################
 # Module:  PieError.py
 # Author:  Emma Goldberg
-# Date:	 Nov, 2011
+# Date:     Nov, 2011
 ######################################################
 
 class PieTreeError(Exception):
-	def __init__(self, value):
-		if isinstance(value, str):
-			self.value = "PieTree ERROR: " + value
-		else:
-			self.value = None
-	def __str__(self):
-		if self.value:
-			return repr(self.value)
+    def __init__(self, value):
+        if isinstance(value, str):
+            self.value = "PieTree ERROR: " + value
+        else:
+            self.value = None
+    def __str__(self):
+        if self.value:
+            return repr(self.value)

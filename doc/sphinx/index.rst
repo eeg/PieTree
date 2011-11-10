@@ -10,6 +10,8 @@ Manual for PieTree |version|
 
    This is an overkill HTML manual, created because I wanted to learn about `Sphinx <http://sphinx.pocoo.org/>`_.
 
+.. TODO: links to pdf or html versions
+
 .. toctree::
    :maxdepth: 3
 

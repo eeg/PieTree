@@ -54,7 +54,6 @@ Input and output logistics
 
 ``ymargin``
   Margin size on the top and bottom of the image.
-  For ``shape = radial``, top and bottom margins are better controlled with ``height``.
 
 
   ``=`` any positive number [default is 10]
@@ -68,6 +67,15 @@ Graphical elements
   ``= rect`` rectangular, with all the tips on the right [the default]
 
   ``= radial`` radial, with the tips along the outside of a circle
+
+``scalebar``
+  Draw a bar showing the time scale of the plot.
+
+  ``= no`` no scale bar is drawn [the default]
+
+  ``= yes`` a scale bar of some auto-calculated length is drawn
+
+  ``= X`` a scale bar of length ``X`` is drawn (replace ``X`` with a number, obviously)
 
 ``colorX`` 
   Color representing state ``X``.  Replace ``X`` with ``0``, ``1``, etc.

@@ -7,3 +7,4 @@ serif = yes
 color1 = (0, 0.45, 0.70)
 color0 = (0.8, 0.4, 0)
 rimthick = 0
+scalebar = 2
