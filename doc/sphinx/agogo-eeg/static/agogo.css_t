@@ -268,6 +268,9 @@ pre {
     padding: 0.8em;
     background-color: #f0f0f0;
     line-height: 120%;
+    /* TODO try this: (and for tt?)
+	* font-family:Consolas,'Lucida Console','DejaVu Sans Mono',monospace;
+	*/
 }
 
 /* Sidebar */
