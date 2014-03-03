@@ -111,7 +111,8 @@ def PutStates(node, state_dict, nstates):
                 raise PieTreeError("specify each tip state as a single value, e.g.,\n   tip1  1")
             state = int(state[0])
             if state not in range(nstates):
-                raise PieTreeError('invalid state for tip "' + str(node.label) + '"')
+                raise PieTreeError('invalid state "' + str(state) + '" for tip "' \
+                                    + str(node.label) + '"')
 
             node.state = state
 
