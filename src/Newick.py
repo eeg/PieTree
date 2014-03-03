@@ -43,7 +43,7 @@ class NewickError(Exception):
 
 def Read(tree_string):
     '''
-     Take a Newick string and return the root of the tree built from it.
+    Take a Newick string and return the root of the tree built from it.
     (note on tip/node labels: they are honored, and even spaces are okay)
     '''
 
