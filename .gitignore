@@ -2,7 +2,5 @@ pre-2010/
 *.pyc
 *.swp
 *.tar.gz
-examples/pietree.pdf
-doc/sphinx/Makefile
 doc/sphinx/_build/
 PieTree-0.4
